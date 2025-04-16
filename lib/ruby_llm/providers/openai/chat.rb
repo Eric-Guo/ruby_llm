@@ -16,6 +16,7 @@ module RubyLLM
             model: model,
             messages: format_messages(messages),
             temperature: temperature,
+            response_format: {type: 'json_object'},
             stream: stream
           }.tap do |payload|
             if tools.any?
