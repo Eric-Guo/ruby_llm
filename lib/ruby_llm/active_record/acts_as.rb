@@ -104,6 +104,12 @@ module RubyLLM
         self
       end
 
+      # @see LlmChat#with_response_format
+      def with_response_format(...)
+        to_llm.with_response_format(...)
+        self
+      end
+
       def with_tool(...)
         to_llm.with_tool(...)
         self
@@ -182,6 +188,7 @@ module RubyLLM
             output_tokens: message.output_tokens
           )
           @message.write_attribute(@message.class.tool_call_foreign_key, tool_call_id) if tool_call_id
+          @message.try('content_schema=', message.content_schema)
           @message.save!
           persist_tool_calls(message.tool_calls) if message.tool_calls.present?
         end
