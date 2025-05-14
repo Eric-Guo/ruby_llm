@@ -382,6 +382,7 @@ RubyLLM::Provider.register :bedrock, RubyLLM::Providers::Bedrock
 RubyLLM::Provider.register :cohere, RubyLLM::Providers::Cohere
 RubyLLM::Provider.register :deepgram, RubyLLM::Providers::Deepgram
 RubyLLM::Provider.register :deepseek, RubyLLM::Providers::DeepSeek
+RubyLLM::Provider.register :dify, RubyLLM::Providers::Dify
 RubyLLM::Provider.register :elevenlabs, RubyLLM::Providers::ElevenLabs
 RubyLLM::Provider.register :gemini, RubyLLM::Providers::Gemini
 RubyLLM::Provider.register :gpustack, RubyLLM::Providers::GPUStack
