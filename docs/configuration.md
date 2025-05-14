@@ -57,6 +57,8 @@ RubyLLM.configure do |config|
   config.ollama_api_base = ENV.fetch('OLLAMA_API_BASE', nil)
   config.gpustack_api_base = ENV.fetch('GPUSTACK_API_BASE', nil)
   config.gpustack_api_key = ENV.fetch('GPUSTACK_API_KEY', nil)
+  config.dify_api_base = ENV.fetch('DIFY_API_BASE', nil)
+  config.dify_api_key = ENV.fetch('DIFY_API_KEY', nil)
 
   # --- AWS Bedrock Credentials ---
   # Uses standard AWS credential chain (environment, shared config, IAM role)

@@ -18,6 +18,8 @@ module RubyLLM
                   :anthropic_api_key,
                   :gemini_api_key,
                   :deepseek_api_key,
+                  :dify_api_base,
+                  :dify_api_key,
                   :perplexity_api_key,
                   :bedrock_api_key,
                   :bedrock_secret_key,
