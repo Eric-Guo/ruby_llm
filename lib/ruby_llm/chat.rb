@@ -5,7 +5,7 @@ module RubyLLM
   class Chat
     include Enumerable
 
-    attr_reader :model, :messages, :tools, :params, :headers, :schema
+    attr_reader :model, :messages, :tools, :params, :headers, :schema, :provider
 
     def initialize(model: nil, provider: nil, assume_model_exists: false, context: nil)
       if assume_model_exists && !provider
