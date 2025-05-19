@@ -5,6 +5,17 @@ module RubyLLM
     class Dify
       # Chat methods of the Dify API integration
       module Chat
+        def upload_document(document_path, original_filename = nil)
+          pn = Pathname.new(document_path)
+          mime_type = RubyLLM::MimeType.for pn
+          original_filename ||= document_path.is_a?(String) ? pn.basename : (document_path.is_a?(Tempfile) ? File.basename(document_path) : document_path.original_filename)
+          payload = {
+            file: Faraday::Multipart::FilePart.new(document_path, mime_type, original_filename),
+            user: 'dify-user'
+          }
+          @connection.upload('v1/files/upload', payload)
+        end
+        
         module_function
 
         def completion_url
@@ -23,8 +34,6 @@ module RubyLLM
           }
           payload
         end
-
-        private
 
         def parse_completion_response(response)
           data = response.body
