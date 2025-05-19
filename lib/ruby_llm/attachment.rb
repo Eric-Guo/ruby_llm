@@ -3,14 +3,14 @@
 module RubyLLM
   # A class representing a file attachment.
   class Attachment
-    attr_reader :source, :filename, :mime_type
+    attr_reader :source, :filename, :mime_type, :upload_file_id
 
     def initialize(source, filename: nil)
       @source = source
       @source = source_type_cast
       @filename = filename || source_filename
 
-      determine_mime_type
+      determine_mime_type if @upload_file_id.nil?
     end
 
     def url?
@@ -31,6 +31,10 @@ module RubyLLM
       @source.is_a?(ActiveStorage::Blob) ||
         @source.is_a?(ActiveStorage::Attached::One) ||
         @source.is_a?(ActiveStorage::Attached::Many)
+    end
+
+    def uuid?
+      @source.match?(/\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/i)
     end
 
     def content
@@ -74,6 +78,7 @@ module RubyLLM
     end
 
     def type
+      return :file_id unless @upload_file_id.nil?
       return :image if image?
       return :video if video?
       return :audio if audio?
@@ -160,6 +165,8 @@ module RubyLLM
     def source_type_cast
       if url?
         URI(@source)
+      elsif uuid?
+        @upload_file_id = @source  
       elsif path?
         Pathname.new(@source)
       else
