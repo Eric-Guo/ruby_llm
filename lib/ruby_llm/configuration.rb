@@ -28,6 +28,7 @@ module RubyLLM
                   :gpustack_api_key,
                   :dify_api_base,
                   :dify_api_key,
+                  :dify_user,
                   # Default models
                   :default_model,
                   :default_embedding_model,
