@@ -16,6 +16,7 @@ module RubyLLM
                   :deepseek_api_key,
                   :dify_api_base,
                   :dify_api_key,
+                  :dify_user,
                   :perplexity_api_key,
                   :bedrock_api_key,
                   :bedrock_secret_key,
