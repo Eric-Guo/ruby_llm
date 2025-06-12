@@ -5,7 +5,7 @@ module RubyLLM
   class Message
     ROLES = %i[system user assistant tool].freeze
 
-    attr_reader :role, :tool_calls, :tool_call_id, :input_tokens, :output_tokens, :model_id, :raw
+    attr_reader :role, :tool_calls, :tool_call_id, :input_tokens, :output_tokens, :model_id, :raw, :conversation_id
     attr_writer :content
 
     def initialize(options = {})
@@ -15,6 +15,7 @@ module RubyLLM
       @input_tokens = options[:input_tokens]
       @output_tokens = options[:output_tokens]
       @model_id = options[:model_id]
+      @conversation_id = options[:conversation_id]
       @tool_call_id = options[:tool_call_id]
       @raw = options[:raw]
 
@@ -49,6 +50,7 @@ module RubyLLM
         tool_call_id: tool_call_id,
         input_tokens: input_tokens,
         output_tokens: output_tokens,
+        conversation_id: conversation_id,
         model_id: model_id
       }.compact
     end
