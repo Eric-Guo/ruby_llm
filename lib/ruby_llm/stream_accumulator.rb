@@ -3,7 +3,7 @@
 module RubyLLM
   # Assembles streaming responses from LLMs into complete messages.
   class StreamAccumulator
-    attr_reader :content, :model_id, :tool_calls
+    attr_reader :content, :model_id, :conversation_id, :tool_calls
 
     def initialize
       @content = +''
@@ -16,6 +16,7 @@ module RubyLLM
     def add(chunk)
       RubyLLM.logger.debug chunk.inspect if RubyLLM.config.log_stream_debug
       @model_id ||= chunk.model_id
+      @conversation_id ||= chunk.conversation_id
 
       if chunk.tool_call?
         accumulate_tool_calls chunk.tool_calls
@@ -32,6 +33,7 @@ module RubyLLM
         role: :assistant,
         content: content.empty? ? nil : content,
         model_id: model_id,
+        conversation_id: conversation_id,
         tool_calls: tool_calls_from_stream,
         input_tokens: @input_tokens.positive? ? @input_tokens : nil,
         output_tokens: @output_tokens.positive? ? @output_tokens : nil,
