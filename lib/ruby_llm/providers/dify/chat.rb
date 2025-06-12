@@ -11,7 +11,7 @@ module RubyLLM
           original_filename ||= document_path.is_a?(String) ? pn.basename : (document_path.is_a?(Tempfile) ? File.basename(document_path) : document_path.original_filename)
           payload = {
             file: Faraday::Multipart::FilePart.new(document_path, mime_type, original_filename),
-            user: 'dify-user'
+            user: config.dify_user || 'dify-user'
           }
           @connection.upload('v1/files/upload', payload)
         end
@@ -34,7 +34,7 @@ module RubyLLM
             query: current_message_content.is_a?(Content) ? current_message_content.text : current_message_content,
             response_mode: (stream ? 'streaming' : 'blocking'),
             conversation_id: latest_conversation_id,
-            user: 'dify-user',
+            user: config.dify_user || 'dify-user',
             files: format_files(current_message_content)
           }
         end
