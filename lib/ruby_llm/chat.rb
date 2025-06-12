@@ -131,6 +131,7 @@ module RubyLLM
         connection: @connection,
         params: @params,
         schema: @schema,
+        config: @config,
         &wrap_streaming_block(&)
       )
 
