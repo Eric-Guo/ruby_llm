@@ -40,6 +40,7 @@ loader.ignore("#{__dir__}/tasks")
 loader.ignore("#{__dir__}/generators")
 loader.ignore("#{__dir__}/ruby_llm/active_record")
 loader.ignore("#{__dir__}/ruby_llm/railtie.rb")
+loader.ignore("#{__dir__}/dify_llm.rb")
 loader.setup
 
 # RubyLLM is a Ruby interface to large language models. One API for
