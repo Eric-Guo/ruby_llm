@@ -3,7 +3,7 @@
 require_relative 'lib/ruby_llm/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'ruby_llm'
+  spec.name          = 'dify_llm'
   spec.version       = RubyLLM::VERSION
   spec.authors       = ['Carmine Paolino']
   spec.email         = ['carmine@paolino.me']
@@ -16,12 +16,12 @@ Gem::Specification.new do |spec|
                        'DeepSeek, Mistral, Ollama (local models), OpenRouter, Perplexity, GPUStack, and any ' \
                        'OpenAI-compatible API. Minimal dependencies - just Faraday, Zeitwerk, and Marcel.'
 
-  spec.homepage      = 'https://rubyllm.com'
+  spec.homepage      = 'https://github.com/crmne/ruby_llm/pull/168'
   spec.license       = 'MIT'
   spec.required_ruby_version = Gem::Requirement.new('>= 3.1.0')
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/crmne/ruby_llm'
+  spec.metadata['source_code_uri'] = 'https://github.com/crmne/ruby_llm/pull/168'
   spec.metadata['changelog_uri'] = "#{spec.metadata['source_code_uri']}/commits/main"
   spec.metadata['documentation_uri'] = spec.homepage
   spec.metadata['bug_tracker_uri'] = "#{spec.metadata['source_code_uri']}/issues"
