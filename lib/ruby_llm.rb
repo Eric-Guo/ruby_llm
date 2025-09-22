@@ -28,6 +28,7 @@ loader.inflector.inflect(
 )
 loader.ignore("#{__dir__}/tasks")
 loader.ignore("#{__dir__}/generators")
+loader.ignore("#{__dir__}/dify_llm.rb")
 loader.setup
 
 # A delightful Ruby interface to modern AI language models.
