@@ -18,7 +18,11 @@ module RubyLLM
     end
 
     def path?
-      @source.is_a?(Pathname) || (@source.is_a?(String) && !url?)
+      return true if @source.is_a?(Pathname)
+      return false unless @source.is_a?(String)
+      return false if url? || uuid?
+
+      true
     end
 
     def io_like?
@@ -175,6 +179,8 @@ module RubyLLM
     end
 
     def source_filename
+      return 'attachment' unless @upload_file_id.nil?
+
       if url?
         File.basename(@source.path).to_s
       elsif path?
