@@ -33,7 +33,9 @@ module RubyLLM
           'v1/chat-messages'
         end
 
-        def render_payload(messages, tools:, temperature:, model:, stream: false, schema: nil, thinking: nil) # rubocop:disable Lint/UnusedMethodArgument
+        # rubocop:disable Lint/UnusedMethodArgument
+        def render_payload(messages, tools:, temperature:, model:, stream: false, schema: nil, thinking: nil,
+                           tool_prefs: nil)
           current_message = messages[-1]
           current_message_content = current_message.content # dify using conversation_id to trace message history
 
@@ -52,6 +54,7 @@ module RubyLLM
           payload[:thinking] = { type: 'enabled' } if thinking&.enabled?
           payload
         end
+        # rubocop:enable Lint/UnusedMethodArgument
 
         def parse_completion_response(response)
           data = response.body
