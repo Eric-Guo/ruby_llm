@@ -37,6 +37,12 @@ RSpec.describe RubyLLM::ActiveRecord::ActsAs do
   end
 
   describe 'attachment handling' do
+    before do
+      allow_any_instance_of(RubyLLM::Chat).to receive(:complete).and_return( # rubocop:disable RSpec/AnyInstance
+        RubyLLM::Message.new(role: :assistant, content: 'Stubbed attachment response')
+      )
+    end
+
     it 'converts ActiveStorage attachments to RubyLLM Content' do
       chat = Chat.create!(model: model)
 

@@ -602,6 +602,12 @@ RSpec.describe RubyLLM::ActiveRecord::ActsAs do
     let(:image_path) { File.expand_path('../../fixtures/ruby.png', __dir__) }
     let(:pdf_path) { File.expand_path('../../fixtures/sample.pdf', __dir__) }
 
+    before do
+      allow_any_instance_of(RubyLLM::Chat).to receive(:complete).and_return( # rubocop:disable RSpec/AnyInstance
+        RubyLLM::Message.new(role: :assistant, content: 'Stubbed attachment response')
+      )
+    end
+
     def attachment_io(path)
       StringIO.new(File.binread(path))
     end
