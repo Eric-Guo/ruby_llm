@@ -5,6 +5,7 @@ module RubyLLM
     # Dify API integration.
     class Dify < Provider
       include Dify::Chat
+      include Dify::Media
       include Dify::Streaming
 
       def api_base
