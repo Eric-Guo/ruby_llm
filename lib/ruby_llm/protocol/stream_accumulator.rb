@@ -6,7 +6,7 @@ require 'securerandom'
 module RubyLLM
   class Protocol
     class StreamAccumulator # :nodoc:
-      attr_reader :content, :model, :tool_calls
+      attr_reader :content, :model, :conversation_id, :tool_calls
 
       def initialize
         @content = +''
@@ -29,6 +29,7 @@ module RubyLLM
       def add(chunk)
         RubyLLM.logger.debug { chunk.inspect } if RubyLLM.config.log_stream_debug
         @model = chunk.model if @model.to_s.empty?
+        @conversation_id ||= chunk.conversation_id
 
         handle_chunk_content(chunk)
         @attachments.concat(chunk.attachments)
@@ -61,6 +62,7 @@ module RubyLLM
           finish_reason: @finish_reason,
           content_filters: @content_filters.values,
           model: model,
+          conversation_id: conversation_id,
           tool_calls: tool_calls_from_stream(response),
           raw: response
         )
