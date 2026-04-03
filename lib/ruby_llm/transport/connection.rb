@@ -123,6 +123,17 @@ module RubyLLM
         end
       end
 
+      def upload(url, payload)
+        connection = Faraday.new(@provider.api_base) do |faraday|
+          faraday.request :multipart, content_type: 'multipart/form-data'
+          faraday.response :json, parser_options: { symbolize_names: true }
+          faraday.proxy = @config.http_proxy if @config.http_proxy
+        end
+        connection.post(url, payload) do |req|
+          req.headers.merge! @provider.headers if @provider.respond_to?(:headers)
+        end
+      end
+
       def get(url, raw: false, &)
         instrument_request(:get, url) do
           connection.get url do |req|
