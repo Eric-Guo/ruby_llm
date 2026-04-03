@@ -36,7 +36,7 @@ module RubyLLM
         end
 
         def configuration_options
-          %i[dify_api_base dify_api_key]
+          %i[dify_api_base dify_api_key dify_user]
         end
 
         def local?
