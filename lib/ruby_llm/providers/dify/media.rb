@@ -9,13 +9,13 @@ module RubyLLM
 
         def format_files(content)
           return nil unless content.is_a?(Content)
-          
+
           parts = []
 
           content.attachments.each do |attachment|
             case attachment.type
             when :file_id
-              parts << format_document_type(attachment)              
+              parts << format_document_type(attachment)
             else
               raise UnsupportedAttachmentError, attachment.class
             end

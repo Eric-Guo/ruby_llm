@@ -26,7 +26,7 @@ module RubyLLM
           }
           @connection.upload('v1/files/upload', payload)
         end
-        
+
         module_function
 
         def completion_url

@@ -23,7 +23,7 @@ module RubyLLM
         reasoning: options[:reasoning_tokens]
       )
       @raw = options[:raw]
-      @conversation_id = options[:conversation_id]      
+      @conversation_id = options[:conversation_id]
       @thinking = options[:thinking]
 
       ensure_valid_role
@@ -80,7 +80,7 @@ module RubyLLM
         model_id: model_id,
         tool_calls: tool_calls,
         tool_call_id: tool_call_id,
-        conversation_id: conversation_id,        
+        conversation_id: conversation_id,
         thinking: thinking&.text,
         thinking_signature: thinking&.signature
       }.merge(tokens ? tokens.to_h : {}).compact
