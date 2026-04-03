@@ -47,6 +47,10 @@ module RubyLLM
     # Hash for messages retrieved from a Batch.
     attr_reader :raw
 
+    # The provider conversation ID used to continue a stateful conversation,
+    # or +nil+ when the provider does not return one.
+    attr_reader :conversation_id
+
     # The model's reasoning output as a Thinking object, or +nil+ when the
     # provider returned none.
     attr_reader :thinking
@@ -97,6 +101,7 @@ module RubyLLM
         reported_cost: options[:reported_cost]
       )
       @raw = options[:raw]
+      @conversation_id = options[:conversation_id]
       @thinking = coerce_thinking(options[:thinking], options[:thinking_signature])
       @citations = Array(options[:citations]).map { |citation| coerce_value(citation, Citation) }
       @server_tool_calls = Array(options[:server_tool_calls]).map { |call| coerce_value(call, ServerToolCall) }
@@ -222,6 +227,7 @@ module RubyLLM
         model: model,
         tool_calls: tool_calls&.transform_values(&:to_h),
         tool_call_id: tool_call_id,
+        conversation_id: conversation_id,
         thinking: thinking&.text,
         thinking_signature: thinking&.signature,
         citations: list_to_h(citations),

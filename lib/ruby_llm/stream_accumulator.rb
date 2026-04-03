@@ -5,7 +5,7 @@ require 'securerandom'
 
 module RubyLLM
   class StreamAccumulator # :nodoc:
-    attr_reader :content, :model, :tool_calls
+    attr_reader :content, :model, :conversation_id, :tool_calls
 
     def initialize
       @content = +''
@@ -31,6 +31,7 @@ module RubyLLM
     def add(chunk)
       RubyLLM.logger.debug { chunk.inspect } if RubyLLM.config.log_stream_debug
       @model = chunk.model if @model.to_s.empty?
+      @conversation_id ||= chunk.conversation_id
 
       handle_chunk_content(chunk)
       accumulate_citations(chunk.citations)
@@ -66,6 +67,8 @@ module RubyLLM
         raw_reasoning: @raw_reasoning,
         finish_reason: @finish_reason,
         model: model,
+        tool_calls: tool_calls_from_stream(response),
+        conversation_id: conversation_id,
         tool_calls: tool_calls_from_stream(response),
         raw: response
       )
