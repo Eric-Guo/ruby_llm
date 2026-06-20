@@ -5,6 +5,7 @@ module RubyLLM
     class Dify
       # Chat methods of the Dify API integration
       module Chat
+        # rubocop:disable Metrics/PerceivedComplexity
         def upload_document(document_path, original_filename = nil)
           path_like = if document_path.respond_to?(:path)
                         document_path.path
@@ -22,10 +23,11 @@ module RubyLLM
                                 end
           payload = {
             file: Faraday::Multipart::FilePart.new(path_like, mime_type, original_filename),
-            user: (@config&.dify_user || 'dify-user')
+            user: @config&.dify_user || 'dify-user'
           }
           @connection.upload('v1/files/upload', payload)
         end
+        # rubocop:enable Metrics/PerceivedComplexity
 
         module_function
 
@@ -33,29 +35,30 @@ module RubyLLM
           'v1/chat-messages'
         end
 
-        # rubocop:disable Lint/UnusedMethodArgument
+        # rubocop:disable Lint/UnusedMethodArgument, Metrics/ParameterLists, Metrics/PerceivedComplexity
         def render_payload(messages, tools:, temperature:, model:, stream: false, schema: nil, thinking: nil,
-                           tool_prefs: nil)
+                           tool_prefs: nil, citations: nil)
           current_message = messages[-1]
           current_message_content = current_message.content # dify using conversation_id to trace message history
 
           # Find the latest non-nil conversation_id from all messages
-          latest_conversation_id = messages.reverse.find { |msg| msg.conversation_id }&.conversation_id
+          latest_conversation_id = messages.reverse.find(&:conversation_id)&.conversation_id
 
           payload = {
             inputs: {},
             query: current_message_content.is_a?(Content) ? current_message_content.text : current_message_content,
             response_mode: (stream ? 'streaming' : 'blocking'),
             conversation_id: latest_conversation_id,
-            user: (@config&.dify_user || 'dify-user'),
+            user: @config&.dify_user || 'dify-user',
             files: format_files(current_message_content)
           }
 
           payload[:thinking] = { type: 'enabled' } if thinking&.enabled?
           payload
         end
-        # rubocop:enable Lint/UnusedMethodArgument
+        # rubocop:enable Lint/UnusedMethodArgument, Metrics/ParameterLists, Metrics/PerceivedComplexity
 
+        # rubocop:disable Metrics/PerceivedComplexity
         def parse_completion_response(response)
           data = response.body
           message_data = data.dig('choices', 0, 'message')
@@ -65,14 +68,13 @@ module RubyLLM
             content, thinking_from_tags = extract_content_and_thinking(message_data['content'])
             thinking_text = thinking_from_tags || extract_thinking_text(message_data)
             thinking_signature = extract_thinking_signature(message_data)
-            thinking_tokens = extract_thinking_tokens(data)
           else
             answer = data['answer']
             content, thinking_from_tags = extract_content_and_thinking(answer)
             thinking_text = thinking_from_tags || extract_thinking_text(data)
             thinking_signature = extract_thinking_signature(data)
-            thinking_tokens = extract_thinking_tokens(data)
           end
+          thinking_tokens = extract_thinking_tokens(data)
 
           Message.new(
             role: :assistant,
@@ -87,6 +89,7 @@ module RubyLLM
             raw: response
           )
         end
+        # rubocop:enable Metrics/PerceivedComplexity
 
         def extract_content_and_thinking(answer)
           return [answer, nil] unless answer.is_a?(String)
@@ -98,6 +101,7 @@ module RubyLLM
           [content.empty? ? nil : content, thinking.empty? ? nil : thinking]
         end
 
+        # rubocop:disable Metrics/PerceivedComplexity
         def extract_thinking_text(data)
           candidate = data['reasoning_content'] || data['reasoning'] || data['thinking'] || data['thought']
           return candidate if candidate.is_a?(String)
@@ -120,6 +124,7 @@ module RubyLLM
 
           text.empty? ? nil : text
         end
+        # rubocop:enable Metrics/PerceivedComplexity
 
         def extract_thinking_signature(data)
           candidate = data['thinking_signature'] || data['reasoning_signature'] || data['signature']

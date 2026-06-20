@@ -40,6 +40,11 @@ RSpec.describe RubyLLM::Provider do
         custom: 'https://deepseek-proxy.example.com',
         default: 'https://api.deepseek.com'
       },
+      dify: {
+        provider: RubyLLM::Providers::Dify,
+        key: :dify_api_base,
+        custom: 'https://dify-proxy.example.com'
+      },
       elevenlabs: {
         provider: RubyLLM::Providers::ElevenLabs,
         key: :elevenlabs_api_base,
@@ -125,6 +130,9 @@ RSpec.describe RubyLLM::Provider do
         config.deepgram_api_key = 'deepgram-key'
       when :deepseek
         config.deepseek_api_key = 'deepseek-key'
+      when :dify
+        config.dify_api_base = 'https://dify-proxy.example.com'
+        config.dify_api_key = 'dify-key'
       when :elevenlabs
         config.elevenlabs_api_key = 'elevenlabs-key'
       when :gemini
