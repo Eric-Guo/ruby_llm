@@ -10,7 +10,8 @@ RSpec.describe RubyLLM::Providers::Dify do
       RubyLLM::Configuration,
       dify_api_base: 'https://dify.example.com',
       dify_api_key: 'test-key',
-      dify_user: 'test-user'
+      dify_user: 'test-user',
+      dify_protocol: nil
     )
   end
   let(:connection) { instance_double(RubyLLM::Connection) }
