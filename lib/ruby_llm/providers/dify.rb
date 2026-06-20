@@ -8,6 +8,14 @@ module RubyLLM
       include Dify::Media
       include Dify::Streaming
 
+      class DifyProtocol < RubyLLM::Protocol
+        include Dify::Chat
+        include Dify::Media
+        include Dify::Streaming
+      end
+
+      protocol :dify, DifyProtocol
+
       def api_base
         @config.dify_api_base
       end
