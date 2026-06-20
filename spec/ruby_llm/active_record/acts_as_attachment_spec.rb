@@ -104,6 +104,7 @@ RSpec.describe RubyLLM::ActiveRecord::ActsAs, :live do
       chat = Chat.create!(model: model)
       captured_messages = nil
 
+      allow_any_instance_of(RubyLLM::Chat).to receive(:complete).and_call_original # rubocop:disable RSpec/AnyInstance
       allow_any_instance_of(RubyLLM::Providers::OpenAI).to receive(:complete) do |_provider, messages, **| # rubocop:disable RSpec/AnyInstance
         captured_messages = messages
         RubyLLM::Message.new(role: :assistant, content: 'I can see it')
@@ -132,6 +133,7 @@ RSpec.describe RubyLLM::ActiveRecord::ActsAs, :live do
                  .with_provider_options(generationConfig: { responseModalities: ['image'] })
       image_bytes = File.binread(image_path)
 
+      allow_any_instance_of(RubyLLM::Chat).to receive(:complete).and_call_original # rubocop:disable RSpec/AnyInstance
       allow_any_instance_of(RubyLLM::Providers::Gemini).to receive(:complete) do |_provider, *_args, **_kwargs| # rubocop:disable RSpec/AnyInstance
         content, attachments = RubyLLM::Protocols::Gemini.allocate.send(
           :build_response_content,
