@@ -15,6 +15,7 @@ module RubyLLM
       end
 
       protocol :dify, DifyProtocol
+      files Dify::Files
 
       def api_base
         @config.dify_api_base
