@@ -37,8 +37,6 @@ module RubyLLM
     # Media resolutions accepted by +resolution:+.
     RESOLUTIONS = %i[low medium high ultra_high original].freeze
 
-    attr_reader :upload_file_id # :nodoc:
-
     # File extensions recognized as document attachments when the MIME type
     # alone is inconclusive.
     DOCUMENT_EXTENSIONS = %w[
@@ -109,7 +107,7 @@ module RubyLLM
       @source = source_type_cast
       @filename = filename || source_filename
 
-      determine_mime_type if @upload_file_id.nil?
+      determine_mime_type
     end
 
     def config # :nodoc:
@@ -150,7 +148,7 @@ module RubyLLM
       return false if provider_file?
       return true if @source.is_a?(Pathname)
       return false unless @source.is_a?(String)
-      return false if url? || uuid?
+      return false if url?
 
       true
     end
@@ -161,12 +159,6 @@ module RubyLLM
 
     def active_storage? # :nodoc:
       ACTIVE_STORAGE_CLASS_NAMES.any? { |class_name| source_is_a?(class_name) }
-    end
-
-    def uuid? # :nodoc:
-      return false unless @source.is_a?(String)
-
-      @source.match?(/\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/i)
     end
 
     # Returns the raw bytes of the attachment, fetching or reading the source
@@ -204,7 +196,6 @@ module RubyLLM
     # Returns the attachment category as a Symbol: +:image+, +:video+,
     # +:audio+, +:pdf+, +:text+, +:document+, or +:unknown+.
     def type
-      return :file_id unless @upload_file_id.nil?
       return :image if image?
       return :video if video?
       return :audio if audio?
@@ -363,8 +354,6 @@ module RubyLLM
     def source_type_cast
       if url?
         URI(@source)
-      elsif uuid?
-        @upload_file_id = @source
       elsif path?
         Pathname.new(@source)
       else
@@ -373,8 +362,6 @@ module RubyLLM
     end
 
     def source_filename
-      return 'attachment' unless @upload_file_id.nil?
-
       if url?
         File.basename(@source.path).to_s
       elsif provider_file?
