@@ -21,7 +21,7 @@ module RubyLLM
             thinking_tokens = Chat.extract_thinking_tokens(data)
             input_tokens = usage['prompt_tokens'] || data.dig('metadata', 'usage', 'prompt_tokens')
             output_tokens = usage['completion_tokens'] || data.dig('metadata', 'usage', 'completion_tokens')
-            model_id = data['model']
+            model = data['model']
           else
             content = data['answer']
             thinking_text = Chat.extract_thinking_text(data)
@@ -29,13 +29,13 @@ module RubyLLM
             thinking_tokens = Chat.extract_thinking_tokens(data)
             input_tokens = data.dig('metadata', 'usage', 'prompt_tokens') || data.dig('usage', 'prompt_tokens')
             output_tokens = data.dig('metadata', 'usage', 'completion_tokens') || data.dig('usage', 'completion_tokens')
-            model_id = nil
+            model = nil
           end
 
           Chunk.new(
             role: :assistant,
             conversation_id: data['conversation_id'],
-            model_id: model_id,
+            model: model,
             content: content,
             thinking: Thinking.build(text: thinking_text, signature: thinking_signature),
             tool_calls: nil,
