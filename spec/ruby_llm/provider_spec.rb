@@ -579,7 +579,7 @@ RSpec.describe RubyLLM::Provider do
 
   describe 'files protocol registration' do
     it 'exposes provider-managed files only where implemented' do
-      file_providers = %i[anthropic azure bedrock gemini mistral openai openrouter vertexai xai]
+      file_providers = %i[anthropic azure bedrock dify gemini mistral openai openrouter vertexai xai]
 
       described_class.providers.each do |slug, provider_class|
         provider = provider_class.new(config_for(slug))
@@ -686,8 +686,8 @@ RSpec.describe RubyLLM::Provider do
 
   describe 'provider registry partitions' do
     it 'splits providers into local and remote' do
-      expect(described_class.local_providers.keys).to contain_exactly(:ollama, :gpustack)
-      expect(described_class.remote_providers.keys).not_to include(:ollama, :gpustack)
+      expect(described_class.local_providers.keys).to contain_exactly(:ollama, :gpustack, :dify)
+      expect(described_class.remote_providers.keys).not_to include(:ollama, :gpustack, :dify)
       expect(described_class.local_providers.keys + described_class.remote_providers.keys).to match_array(
         described_class.providers.keys
       )

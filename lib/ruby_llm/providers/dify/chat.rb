@@ -5,30 +5,6 @@ module RubyLLM
     class Dify
       # Chat methods of the Dify API integration
       module Chat
-        # rubocop:disable Metrics/PerceivedComplexity
-        def upload_document(document_path, original_filename = nil)
-          path_like = if document_path.respond_to?(:path)
-                        document_path.path
-                      elsif document_path.respond_to?(:to_path)
-                        document_path.to_path
-                      else
-                        document_path
-                      end
-          pn = Pathname.new(path_like)
-          mime_type = RubyLLM::MimeType.for pn
-          original_filename ||= if document_path.respond_to?(:original_filename)
-                                  document_path.original_filename
-                                else
-                                  pn.basename.to_s
-                                end
-          payload = {
-            file: Faraday::Multipart::FilePart.new(path_like, mime_type, original_filename),
-            user: @config&.dify_user || 'dify-user'
-          }
-          @connection.upload('v1/files/upload', payload)
-        end
-        # rubocop:enable Metrics/PerceivedComplexity
-
         module_function
 
         def completion_url
@@ -36,8 +12,8 @@ module RubyLLM
         end
 
         # rubocop:disable Lint/UnusedMethodArgument, Metrics/ParameterLists, Metrics/PerceivedComplexity
-        def render_payload(messages, tools:, temperature:, model:, stream: false, schema: nil, thinking: nil,
-                           tool_prefs: nil, citations: nil)
+        def render_payload(messages, tools:, temperature:, model:, stream: false, max_output_tokens: nil, schema: nil,
+                           thinking: nil, tool_prefs: nil, citations: nil, caching: nil)
           current_message = messages[-1]
           current_message_content = current_message.content # dify using conversation_id to trace message history
 
@@ -46,11 +22,11 @@ module RubyLLM
 
           payload = {
             inputs: {},
-            query: current_message_content.is_a?(Content) ? current_message_content.text : current_message_content,
+            query: current_message_content,
             response_mode: (stream ? 'streaming' : 'blocking'),
             conversation_id: latest_conversation_id,
             user: @config&.dify_user || 'dify-user',
-            files: format_files(current_message_content)
+            files: format_files(current_message.attachments)
           }
 
           payload[:thinking] = { type: 'enabled' } if thinking&.enabled?
@@ -85,7 +61,7 @@ module RubyLLM
             output_tokens: usage['completion_tokens'] || data.dig('metadata', 'usage', 'completion_tokens'),
             thinking_tokens: thinking_tokens,
             conversation_id: data['conversation_id'],
-            model_id: data['model'] || 'dify-model',
+            model: data['model'] || 'dify-model',
             raw: response
           )
         end
@@ -143,6 +119,19 @@ module RubyLLM
             usage['reasoning_tokens'] ||
             usage.dig('completion_tokens_details', 'reasoning_tokens') ||
             usage.dig('output_tokens_details', 'thinking_tokens')
+        end
+
+        def supports_provider_file_references?
+          true
+        end
+
+        def default_large_file_upload_threshold
+          0
+        end
+
+        def provider_file_attachable?(attachment)
+          attachment.image? || attachment.video? || attachment.audio? || attachment.pdf? ||
+            attachment.document? || attachment.text?
         end
       end
     end

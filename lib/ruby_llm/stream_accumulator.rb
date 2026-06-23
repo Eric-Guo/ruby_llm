@@ -67,7 +67,6 @@ module RubyLLM
         raw_reasoning: @raw_reasoning,
         finish_reason: @finish_reason,
         model: model,
-        tool_calls: tool_calls_from_stream(response),
         conversation_id: conversation_id,
         tool_calls: tool_calls_from_stream(response),
         raw: response
