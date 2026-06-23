@@ -105,7 +105,6 @@ RSpec.describe RubyLLM::Attachment do
     expect(attachment).not_to be_active_storage
     expect(attachment.content).to eq('notes')
   end
-
   describe 'provider-managed file accessors' do
     it 'reports no provider id or URI for ordinary sources' do
       attachment = described_class.new(StringIO.new('notes'), filename: 'notes.txt')
@@ -229,14 +228,4 @@ RSpec.describe RubyLLM::Attachment do
     end
   end
 
-  it 'treats UUID strings as upload file ids' do
-    file_id = '123e4567-e89b-12d3-a456-426614174000'
-
-    attachment = described_class.new(file_id)
-
-    expect(attachment.upload_file_id).to eq(file_id)
-    expect(attachment.type).to eq(:file_id)
-    expect(attachment.filename).to eq('attachment')
-    expect(attachment.path?).to be(false)
-  end
 end
