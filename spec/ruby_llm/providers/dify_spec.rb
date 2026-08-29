@@ -81,7 +81,8 @@ RSpec.describe RubyLLM::Providers::Dify do
 
       expect(connection).to have_received(:post).with(
         'v1/files/upload',
-        hash_including(:file, user: 'test-user')
+        hash_including(:file, user: 'test-user'),
+        idempotent: false
       )
       expect(file).to be_a(RubyLLM::UploadedFile)
       expect(file.id).to eq('dify-file-123')
@@ -170,7 +171,8 @@ RSpec.describe RubyLLM::Providers::Dify do
       expect(processed.attachments.first.provider_file_id).to eq('dify-file-123')
       expect(connection).to have_received(:post).with(
         'v1/files/upload',
-        hash_including(:file, user: 'test-user')
+        hash_including(:file, user: 'test-user'),
+        idempotent: false
       )
     end
   end
