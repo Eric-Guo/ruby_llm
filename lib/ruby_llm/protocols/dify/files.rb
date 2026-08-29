@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module RubyLLM
-  module Providers
-    class Dify
+  module Protocols
+    module Dify
       # Dify Files API.
-      class Files < UploadedFile::Protocol
+      class Files < Protocols::Files
         private
 
         def files_url
