@@ -133,6 +133,7 @@ RSpec.describe RubyLLM::Attachment do
     expect(attachment).not_to be_active_storage
     expect(attachment.content).to eq('notes')
   end
+
   describe 'provider-managed file accessors' do
     it 'reports no provider id or URI for ordinary sources' do
       attachment = described_class.new(StringIO.new('notes'), filename: 'notes.txt')

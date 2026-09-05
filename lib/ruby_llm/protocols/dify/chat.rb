@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
 module RubyLLM
-  module Providers
+  module Protocols
     class Dify
       # Chat methods of the Dify API integration
       module Chat
         module_function
 
+        def finish_reasons = {}
+
         def completion_url
           'v1/chat-messages'
         end
 
-        # rubocop:disable Lint/UnusedMethodArgument, Metrics/ParameterLists, Metrics/PerceivedComplexity
+        # rubocop:disable-next Lint/UnusedMethodArgument
         def render_payload(messages, tools:, temperature:, model:, stream: false, max_output_tokens: nil, schema: nil,
                            thinking: nil, tool_prefs: nil, citations: nil, caching: nil)
           current_message = messages[-1]
@@ -32,11 +34,9 @@ module RubyLLM
           payload[:thinking] = { type: 'enabled' } if thinking&.enabled?
           payload
         end
-        # rubocop:enable Lint/UnusedMethodArgument, Metrics/ParameterLists, Metrics/PerceivedComplexity
 
-        # rubocop:disable Metrics/PerceivedComplexity
-        def parse_completion_response(response)
-          data = response.body
+        # rubocop:disable-next Metrics/PerceivedComplexity
+        def parse_completion_body(data, raw:)
           message_data = data.dig('choices', 0, 'message')
           usage = data['usage'] || {}
 
@@ -62,10 +62,9 @@ module RubyLLM
             thinking_tokens: thinking_tokens,
             conversation_id: data['conversation_id'],
             model: data['model'] || 'dify-model',
-            raw: response
+            raw: raw
           )
         end
-        # rubocop:enable Metrics/PerceivedComplexity
 
         def extract_content_and_thinking(answer)
           return [answer, nil] unless answer.is_a?(String)
@@ -77,7 +76,7 @@ module RubyLLM
           [content.empty? ? nil : content, thinking.empty? ? nil : thinking]
         end
 
-        # rubocop:disable Metrics/PerceivedComplexity
+        # rubocop:disable-next Metrics/PerceivedComplexity
         def extract_thinking_text(data)
           candidate = data['reasoning_content'] || data['reasoning'] || data['thinking'] || data['thought']
           return candidate if candidate.is_a?(String)
@@ -100,7 +99,6 @@ module RubyLLM
 
           text.empty? ? nil : text
         end
-        # rubocop:enable Metrics/PerceivedComplexity
 
         def extract_thinking_signature(data)
           candidate = data['thinking_signature'] || data['reasoning_signature'] || data['signature']

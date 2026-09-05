@@ -60,6 +60,7 @@ RSpec.describe RubyLLM::Providers::Dify do
       )
       expect(result.content).to eq('您好')
       expect(result.conversation_id).to eq('conversation-123')
+      expect(result.raw).to eq(response)
     end
   end
 
@@ -146,7 +147,7 @@ RSpec.describe RubyLLM::Providers::Dify do
     end
   end
 
-  describe '#preprocess_message' do
+  describe '#preprocess_messages' do
     it 'uploads attachable files into provider-managed references' do
       attachment = RubyLLM::Attachment.new(StringIO.new('hello'), filename: 'notes.txt')
       upload_response = instance_double(
@@ -164,7 +165,7 @@ RSpec.describe RubyLLM::Providers::Dify do
         attachments: [attachment]
       )
 
-      processed = provider.preprocess_message(message, model: model)
+      processed = provider.preprocess_messages([message], model: model).first
 
       expect(processed).not_to be(message)
       expect(processed.attachments.first).to be_provider_file

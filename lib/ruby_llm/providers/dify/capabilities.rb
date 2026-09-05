@@ -3,12 +3,11 @@
 module RubyLLM
   module Providers
     class Dify
-      module Capabilities
+      module Capabilities # :nodoc:
         module_function
 
-        def capabilities_for(model_id)
-          capabilities = ['streaming']
-          capabilities
+        def capabilities_for(_model_id)
+          ['streaming']
         end
       end
     end
