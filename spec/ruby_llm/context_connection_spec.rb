@@ -5,6 +5,14 @@ require 'spec_helper'
 RSpec.describe 'Context connection settings' do # rubocop:disable RSpec/DescribeClass
   include_context 'with configured RubyLLM'
 
+  around do |example|
+    ignore_env_proxy = Faraday.ignore_env_proxy
+    Faraday.ignore_env_proxy = true
+    example.run
+  ensure
+    Faraday.ignore_env_proxy = ignore_env_proxy
+  end
+
   let(:context) do
     RubyLLM.context do |config|
       config.http_proxy = 'http://proxy.example:8080'
