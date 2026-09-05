@@ -28,8 +28,7 @@ module RubyLLM
 
       def add(chunk)
         RubyLLM.logger.debug { chunk.inspect } if RubyLLM.config.log_stream_debug
-        @model = chunk.model if @model.to_s.empty?
-        @conversation_id ||= chunk.conversation_id
+        accumulate_identifiers(chunk)
 
         handle_chunk_content(chunk)
         @attachments.concat(chunk.attachments)
@@ -75,6 +74,11 @@ module RubyLLM
         @raw_reasoning = chunk.raw_reasoning if chunk.raw_reasoning
         @phase = chunk.phase if chunk.phase
         @continuation = chunk.continuation if chunk.continuation
+      end
+
+      def accumulate_identifiers(chunk)
+        @conversation_id ||= chunk.conversation_id
+        @model = chunk.model if @model.to_s.empty?
       end
 
       # A stream can judge the same category again as it goes; a verdict

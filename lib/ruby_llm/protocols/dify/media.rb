@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module RubyLLM
-  module Providers
+  module Protocols
     class Dify
       # Media handling methods for the Dify API integration
       module Media
         module_function
 
-        def format_files(attachments)
+        def render_files(attachments)
           return nil if attachments.empty?
 
           parts = []
@@ -15,13 +15,13 @@ module RubyLLM
           attachments.each do |attachment|
             raise UnsupportedAttachmentError, attachment.class unless attachment.provider_file?
 
-            parts << format_provider_file(attachment)
+            parts << render_provider_file(attachment)
           end
 
           parts
         end
 
-        def format_provider_file(attachment)
+        def render_provider_file(attachment)
           {
             type: dify_file_type(attachment),
             transfer_method: 'local_file',
