@@ -648,8 +648,8 @@ RSpec.describe RubyLLM::Provider do
 
   describe 'files protocol registration' do
     it 'exposes provider-managed files only where implemented' do
-      file_providers = %i[anthropic azure bedrock cohere deepseek dify elevenlabs gemini mistral openai openrouter perplexity
-                          vertexai xai]
+      file_providers = %i[anthropic azure bedrock cohere deepseek dify elevenlabs gemini mistral openai openrouter
+                          perplexity vertexai xai]
 
       described_class.providers.each do |slug, provider_class|
         provider = provider_class.new(config_for(slug))
