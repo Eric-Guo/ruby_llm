@@ -89,6 +89,16 @@ When you find provider vocabulary in the wrong layer, move it and add the rule t
 - `spec/support/models_to_test.rb` defines the provider and model matrix the live specs iterate over.
 - Changed a wire request? Re-record the cassette. Changed a parsed value? Update the protocol spec, not the domain spec.
 
+### macOS parallel test runner
+
+If `rspec-queue` crashes with `objc_initializeAfterForkError` while `ruby-vips` loads the native libvips image library, preload `vips` before the runner forks. The pre-commit hook does this automatically. For direct runs, use:
+
+```bash
+SPEC_OPTS='--require vips --tag ~live' bundle exec bin/rspec-queue --tag ~generator
+```
+
+`--require vips` addresses the crash; `--tag ~live` excludes provider API tests. To run without forking, use `bundle exec rspec --tag ~live`. Keep macOS's fork safety checks enabled.
+
 ## Code style
 
 - No implementation comments. A comment earns its place only by stating a constraint the code cannot show. Public API gets RDoc; see `.rdoc_options` for what is documented.
