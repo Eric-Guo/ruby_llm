@@ -2,7 +2,7 @@
 
 module RubyLLM
   module Protocols
-    module Dify
+    class Dify
       # Dify Files API.
       class Files < Protocols::Files
         private

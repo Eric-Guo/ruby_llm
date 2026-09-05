@@ -96,6 +96,7 @@ component :chat_protocol_families, in: %w[
   lib/ruby_llm/protocols/chat_completions.rb
   lib/ruby_llm/protocols/cohere.rb
   lib/ruby_llm/protocols/converse.rb
+  lib/ruby_llm/protocols/dify.rb
   lib/ruby_llm/protocols/gemini.rb
   lib/ruby_llm/protocols/responses.rb
 ]

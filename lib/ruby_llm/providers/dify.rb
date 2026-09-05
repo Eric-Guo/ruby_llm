@@ -4,17 +4,7 @@ module RubyLLM
   module Providers
     # Dify API integration.
     class Dify < Provider
-      include Dify::Chat
-      include Dify::Media
-      include Dify::Streaming
-
-      class DifyProtocol < RubyLLM::Protocol
-        include Dify::Chat
-        include Dify::Media
-        include Dify::Streaming
-      end
-
-      protocol :dify, DifyProtocol
+      protocol :dify, Protocols::Dify
       protocol :files, Protocols::Dify::Files
 
       def api_base
