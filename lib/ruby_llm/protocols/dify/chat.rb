@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
 module RubyLLM
-  module Providers
+  module Protocols
     class Dify
       # Chat methods of the Dify API integration
       module Chat
         module_function
 
+        def finish_reasons = {}
+
         def completion_url
           'v1/chat-messages'
         end
 
-        # rubocop:disable Lint/UnusedMethodArgument, Metrics/ParameterLists, Metrics/PerceivedComplexity
+        # rubocop:disable-next Lint/UnusedMethodArgument
         def render_payload(messages, tools:, temperature:, model:, stream: false, max_output_tokens: nil, schema: nil,
                            thinking: nil, tool_prefs: nil, citations: nil, caching: nil)
           current_message = messages[-1]
@@ -26,31 +28,29 @@ module RubyLLM
             response_mode: (stream ? 'streaming' : 'blocking'),
             conversation_id: latest_conversation_id,
             user: @config&.dify_user || 'dify-user',
-            files: format_files(current_message.attachments)
+            files: render_files(current_message.attachments)
           }
 
           payload[:thinking] = { type: 'enabled' } if thinking&.enabled?
           payload
         end
-        # rubocop:enable Lint/UnusedMethodArgument, Metrics/ParameterLists, Metrics/PerceivedComplexity
 
-        # rubocop:disable Metrics/PerceivedComplexity
-        def parse_completion_response(response)
-          data = response.body
+        # rubocop:disable-next Metrics/PerceivedComplexity
+        def parse_completion_body(data, raw:)
           message_data = data.dig('choices', 0, 'message')
           usage = data['usage'] || {}
 
           if message_data
-            content, thinking_from_tags = extract_content_and_thinking(message_data['content'])
-            thinking_text = thinking_from_tags || extract_thinking_text(message_data)
-            thinking_signature = extract_thinking_signature(message_data)
+            content, thinking_from_tags = parse_content_and_thinking(message_data['content'])
+            thinking_text = thinking_from_tags || parse_thinking_text(message_data)
+            thinking_signature = parse_thinking_signature(message_data)
           else
             answer = data['answer']
-            content, thinking_from_tags = extract_content_and_thinking(answer)
-            thinking_text = thinking_from_tags || extract_thinking_text(data)
-            thinking_signature = extract_thinking_signature(data)
+            content, thinking_from_tags = parse_content_and_thinking(answer)
+            thinking_text = thinking_from_tags || parse_thinking_text(data)
+            thinking_signature = parse_thinking_signature(data)
           end
-          thinking_tokens = extract_thinking_tokens(data)
+          thinking_tokens = parse_thinking_tokens(data)
 
           Message.new(
             role: :assistant,
@@ -62,12 +62,11 @@ module RubyLLM
             thinking_tokens: thinking_tokens,
             conversation_id: data['conversation_id'],
             model: data['model'] || 'dify-model',
-            raw: response
+            raw: raw
           )
         end
-        # rubocop:enable Metrics/PerceivedComplexity
 
-        def extract_content_and_thinking(answer)
+        def parse_content_and_thinking(answer)
           return [answer, nil] unless answer.is_a?(String)
           return [answer, nil] unless answer.include?('<think>')
 
@@ -77,8 +76,8 @@ module RubyLLM
           [content.empty? ? nil : content, thinking.empty? ? nil : thinking]
         end
 
-        # rubocop:disable Metrics/PerceivedComplexity
-        def extract_thinking_text(data)
+        # rubocop:disable-next Metrics/PerceivedComplexity
+        def parse_thinking_text(data)
           candidate = data['reasoning_content'] || data['reasoning'] || data['thinking'] || data['thought']
           return candidate if candidate.is_a?(String)
 
@@ -100,9 +99,8 @@ module RubyLLM
 
           text.empty? ? nil : text
         end
-        # rubocop:enable Metrics/PerceivedComplexity
 
-        def extract_thinking_signature(data)
+        def parse_thinking_signature(data)
           candidate = data['thinking_signature'] || data['reasoning_signature'] || data['signature']
           return candidate if candidate.is_a?(String)
 
@@ -113,7 +111,7 @@ module RubyLLM
           candidate if candidate.is_a?(String)
         end
 
-        def extract_thinking_tokens(data)
+        def parse_thinking_tokens(data)
           usage = data['usage'] || data.dig('metadata', 'usage') || {}
           usage['thinking_tokens'] ||
             usage['reasoning_tokens'] ||
@@ -121,7 +119,7 @@ module RubyLLM
             usage.dig('output_tokens_details', 'thinking_tokens')
         end
 
-        def supports_provider_file_references?
+        def provider_file_references?
           true
         end
 
