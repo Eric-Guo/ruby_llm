@@ -19,6 +19,8 @@ PreCommit:
     enabled: true
     command: [
       'bundle', 'exec', 'bin/rspec-queue',
+      '--require', 'vips',
+      '--tag', '~live',
       '--tag', '~generator'
     ]
     on_warn: fail
