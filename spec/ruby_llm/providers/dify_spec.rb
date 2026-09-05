@@ -15,7 +15,7 @@ RSpec.describe RubyLLM::Providers::Dify do
       auto_upload_large_files: true
     )
   end
-  let(:connection) { instance_double(RubyLLM::Connection) }
+  let(:connection) { instance_double(RubyLLM::Transport::Connection) }
   let(:model) { instance_double(RubyLLM::Model, id: 'dify-chat') }
   let(:messages) { [RubyLLM::Message.new(role: :user, content: '你好')] }
   let(:response) do
@@ -35,7 +35,7 @@ RSpec.describe RubyLLM::Providers::Dify do
   end
 
   before do
-    allow(RubyLLM::Connection).to receive(:new).and_return(connection)
+    allow(RubyLLM::Transport::Connection).to receive(:new).and_return(connection)
     allow(connection).to receive(:post).and_return(response)
   end
 
@@ -56,7 +56,7 @@ RSpec.describe RubyLLM::Providers::Dify do
           response_mode: 'blocking',
           user: 'test-user'
         ),
-        usage: instance_of(RubyLLM::Usage::Tracker)
+        usage: instance_of(RubyLLM::Accounting::Usage::Tracker)
       )
       expect(result.content).to eq('您好')
       expect(result.conversation_id).to eq('conversation-123')
