@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module RubyLLM
-  module Providers
+  module Protocols
     class Dify
       # Media handling methods for the Dify API integration
       module Media

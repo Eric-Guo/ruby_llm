@@ -60,6 +60,7 @@ RSpec.describe RubyLLM::Providers::Dify do
       )
       expect(result.content).to eq('您好')
       expect(result.conversation_id).to eq('conversation-123')
+      expect(result.raw).to eq(response)
     end
   end
 
