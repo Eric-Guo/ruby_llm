@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'googleauth'
 
 RSpec.describe RubyLLM::Protocols::VertexAI::Ranking do
   let(:model) { model_for(:vertexai, :vertexai_rerank) }
@@ -34,6 +35,10 @@ RSpec.describe RubyLLM::Protocols::VertexAI::Ranking do
     expect(result.results.first).to have_attributes(index: 1, document: documents.last, score: be_between(0, 1))
     expect(result.tokens.input).to be_nil
     expect(result.cost.total).to be_nil
+  rescue Google::Auth::InitializationError => e
+    raise unless e.message == Google::Auth::NOT_FOUND_ERROR
+
+    skip 'Google Cloud Application Default Credentials are not configured'
   rescue RubyLLM::ForbiddenError => e
     raise unless e.message.include?('Discovery Engine API') && e.message.include?('disabled')
 
